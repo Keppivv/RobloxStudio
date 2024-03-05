@@ -18,11 +18,15 @@ local function isInArea(area, pos)
 end
 
 local function sounder(name)
-	local sound = nil
+	local sound = game.ReplicatedStorage.Sounds.Coins:Clone()
 	if name == "Breakable_Diamond" then
 		sound = game.ReplicatedStorage.Sounds.Diamonds:Clone()
-	else
-		sound = game.ReplicatedStorage.Sounds.Coins:Clone()
+	end
+	local boxlist = {"Breakable_Chest", "Breakable_Gift", "Breakable_Safe", "Breakable_Crate", "Breakable_DiamondGift"}
+	for i = 1, #boxlist do
+		if string.format(boxlist[i]) == string.format(name) then
+			sound = game.ReplicatedStorage.Sounds.Boxes:Clone()
+		end
 	end
 	sound.Parent = player.Character.Head
 	sound:Play()
@@ -83,22 +87,33 @@ while true do
 				if lottery >= 800000 then
 					breakable = breakables.Breakable_Crate:Clone()
 				end
-				if lottery > 850000 then
+				if lottery > 830000 then
 					breakable = breakables.Breakable_Safe:Clone()
 				end
-				if lottery > 900000 then
+				if lottery > 880000 then
 					breakable = breakables.Breakable_Gift:Clone()
 				end
-				if lottery > 925000 then
+				if lottery > 920000 then
 					breakable = breakables.Breakable_Diamond:Clone()
 				end
-				if lottery > 985000 then
+				if lottery > 660000 then
+					breakable = breakables.Breakable_DiamondGift:Clone()
+					breakable.Weld1.Part0 = breakable
+					breakable.Weld1.Part1 = breakable.Diamonds1
+					breakable.Weld2.Part0 = breakable
+					breakable.Weld2.Part1 = breakable.Diamonds2
+					breakable.Weld3.Part0 = breakable
+					breakable.Weld3.Part1 = breakable.Diamonds3
+					breakable.Weld4.Part0 = breakable
+					breakable.Weld4.Part1 = breakable.Diamonds4
+				end
+				if lottery > 990000 then
 					breakable = breakables.Breakable_Chest:Clone()
 				end
 				breakable.Particles.Sparkles.Enabled = false
 				breakable.Floating.Enabled = false
 				local lottery = math.random(1, 1000000)
-				if lottery > 990000 then
+				if lottery > 900000 then
 					breakable.Particles.Sparkles.Enabled = true
 					breakable.Floating.Enabled = true
 					local multi = math.random(2,10)
