@@ -8,8 +8,8 @@ local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables
 
 -- Check if player is inside the Area in z and y axis
 local function isInArea(area, pos)
-	if pos.X > area.Position.X + area.Size.X/4 or pos.X < area.Position.X - area.Size.X/4 or
-		pos.Z > area.Position.Z + area.Size.Z/4 or pos.Z < area.Position.Z - area.Size.Z/4 then
+	if pos.X > area.Position.X + area.Size.X/2 or pos.X < area.Position.X - area.Size.X/2 or
+		pos.Z > area.Position.Z + area.Size.Z/2 or pos.Z < area.Position.Z - area.Size.Z/2 then
 		return false
 	end
 	return true
@@ -34,6 +34,7 @@ local function updateLights()
 			local parts = Areas[i].Area:GetChildren()
 			for x in parts do
 				parts[x].SurfaceLight.Color = Color3.new(1, 0, 0)
+				parts[x].Color = Color3.new(1,0,0)
 			end
 		end
 	else
@@ -43,8 +44,10 @@ local function updateLights()
 			for x in parts do
 				if area.Name == Areas[i].Name then
 					parts[x].SurfaceLight.Color = Color3.new(0, 1, 0)
+					parts[x].Color = Color3.new(0,1,0)
 				else
 					parts[x].SurfaceLight.Color = Color3.new(1, 0, 0)
+					parts[x].Color = Color3.new(1,0,0)
 				end
 			end
 		end
@@ -79,8 +82,8 @@ end
 -- Function to choose spawn location
 local function determineSpawnLocation(area, breakable)
 	local currentBreakables = area.Breakables:GetChildren()
-	local x = math.random(area.Position.X - area.Size.X/6, area.Position.X + area.Size.X/6)
-	local z = math.random(area.Position.Z - area.Size.Z/6, area.Position.Z + area.Size.Z/6)
+	local x = math.random(area.Position.X - area.Size.X/2.3, area.Position.X + area.Size.X/2.3)
+	local z = math.random(area.Position.Z - area.Size.Z/2.3, area.Position.Z + area.Size.Z/2.3)
 	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y)
 	
 	local lenCanSpawn = true
