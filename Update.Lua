@@ -4,6 +4,7 @@ script.Parent.Health.Background.Visible = false
 script.Parent.Health.Background.Bar.Visible = false
 script.Parent.Floating.Label.Text = ""
 script.Parent.Floating.Enabled = false
+script.Parent.Sparkles.Enabled = false
 while true do
 	local real_Health = script.Parent.Settings.Health.Value
 	if real_Health <= 0 then
