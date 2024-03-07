@@ -68,26 +68,26 @@ end
 -- Function to select the breakable
 local function selectBreakable()
 	local lottery = math.random(0,1000000000)
-	if lottery >= 500000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
-	end
-	if lottery >= 600000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
-	end
-	if lottery >= 700000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Crate:Clone()
-	end
-	if lottery >= 800000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Safe:Clone()
-	end
-	if lottery >= 900000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Gift:Clone()
+	if lottery >= 999000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Chest:Clone()
 	end
 	if lottery >= 950000000 then
 		return game.ReplicatedStorage.Breakables.Breakable_Diamond:Clone()
 	end
-	if lottery >= 999000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Chest:Clone()
+	if lottery >= 900000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Gift:Clone()
+	end
+	if lottery >= 800000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Safe:Clone()
+	end
+	if lottery >= 700000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Crate:Clone()
+	end
+	if lottery >= 600000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_BigCoin:Clone()
+	end
+	if lottery >= 500000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
 	end
 	return game.ReplicatedStorage.Breakables.Breakable_LowCoin:Clone()
 end
