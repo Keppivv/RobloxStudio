@@ -1,5 +1,7 @@
 Roblox game LUA scripts
 
-Object Spawner, multi functionality.
+Object Spawner, Type checks, Lottery, Rotation, Positioning...
 
-BigNumber ModuleScript, seems to work okay(ish) with small numbers in add and multiplty, not so in subtract.
+Gui handling..
+
+Input detection, sound and math functionality..
