@@ -18,11 +18,6 @@ end
 -- Function to play different sounds based on the breakable type
 local function playSound(name, parent)
 	local sound = game.ReplicatedStorage.Sounds.Coins:Clone() -- default sound
-	if name == "Breakable_Diamond" then
-		sound = game.ReplicatedStorage.Sounds.Diamonds:Clone()
-	elseif table.find({"Breakable_Chest", "Breakable_Gift", "Breakable_Safe", "Breakable_Crate", "Breakable_DiamondGift"}, name) then
-		sound = game.ReplicatedStorage.Sounds.Boxes:Clone()
-	end
 	sound.Parent = parent
 	sound:Play()
 	wait(1)
@@ -69,40 +64,41 @@ end
 local function selectBreakable()
 	local lottery = math.random(0,1000000000)
 	if lottery >= 999000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Chest:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 950000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Diamond:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 900000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Gift:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 800000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Safe:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 700000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_Crate:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 600000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_BigCoin:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
 	if lottery >= 500000000 then
-		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
+		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 	end
-	return game.ReplicatedStorage.Breakables.Breakable_LowCoin:Clone()
+	return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 end
 -- Function to choose spawn location
 local function determineSpawnLocation(area, breakable)
 	local currentBreakables = area.Breakables:GetChildren()
 	local x = math.random(area.Position.X - area.Size.X/6, area.Position.X + area.Size.X/6)
 	local z = math.random(area.Position.Z - area.Size.Z/6, area.Position.Z + area.Size.Z/6)
-	local y = area.Position.Y + (breakable.Size.Y/1.75)
+	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y/4.5)
+	
 	local lenCanSpawn = true
 	if rawlen(currentBreakables) == 0 then
 		return true, x, y, z
 	else
 		for i in currentBreakables do
-			if (currentBreakables[i].Position - Vector3.new(x,y,z)).Magnitude <= minDistance then
+			if (currentBreakables[i]:GetPivot().Position - Vector3.new(x,y,z)).Magnitude <= minDistance then
 				lenCanSpawn = false
 				return false, x, y, z
 			end
@@ -139,8 +135,11 @@ local function spawnBreakable(area)
 
 	local canSpawn, x, y, z = determineSpawnLocation(area, breakable) -- Function to be defined for determining spawn location
 	if not canSpawn then return end -- Can't spawn at the determined location
-
-	breakable.Position = Vector3.new(x, y, z)
+	
+	--local xxx = Instance.new("Model")
+	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
+	
+	--breakable:MoveTo(Vector3.new(x,y,z))
 	breakable.Parent = area.Breakables
 	setupBreakable(breakable) -- Function to be defined for setting up the breakable (click detector, cleanup, etc.)
 end
