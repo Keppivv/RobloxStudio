@@ -3,177 +3,156 @@ local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
 local maxBreakables = 40
-local currentBreakables = 0
+local minDistance = 6
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
--- if player is inside the Area in x and y axis
+-- Check if player is inside the Area in x and y axis
 local function isInArea(area, pos)
-	if pos.X > area.Position.X + area.Size.X/4 or pos.X < area.Position.X - area.Size.X/4 then
-		return false
-	end
-	if pos.Z > area.Position.Z + area.Size.Z/4 or pos.Z < area.Position.Z - area.Size.Z/4 then
+	if pos.X > area.Position.X + area.Size.X/4 or pos.X < area.Position.X - area.Size.X/4 or
+		pos.Z > area.Position.Z + area.Size.Z/4 or pos.Z < area.Position.Z - area.Size.Z/4 then
 		return false
 	end
 	return true
 end
 
-local function sounder(name)
-	local sound = game.ReplicatedStorage.Sounds.Coins:Clone()
+-- Function to play different sounds based on the breakable type
+local function playSound(name, parent)
+	local sound = game.ReplicatedStorage.Sounds.Coins:Clone() -- default sound
 	if name == "Breakable_Diamond" then
 		sound = game.ReplicatedStorage.Sounds.Diamonds:Clone()
+	elseif table.find({"Breakable_Chest", "Breakable_Gift", "Breakable_Safe", "Breakable_Crate", "Breakable_DiamondGift"}, name) then
+		sound = game.ReplicatedStorage.Sounds.Boxes:Clone()
 	end
-	local boxlist = {"Breakable_Chest", "Breakable_Gift", "Breakable_Safe", "Breakable_Crate", "Breakable_DiamondGift"}
-	for i = 1, #boxlist do
-		if string.format(boxlist[i]) == string.format(name) then
-			sound = game.ReplicatedStorage.Sounds.Boxes:Clone()
-		end
-	end
-	sound.Parent = player.Character.Head
+	sound.Parent = parent
 	sound:Play()
 	wait(1)
 	sound:Destroy()
 end
 
-while true do
+-- Function to determine which Area the player is currently in
+local function getCurrentArea()
 	local Areas = workspace:WaitForChild("Areas"):GetChildren()
-	local Area = nil
-	for area in Areas do
-		local t_val = isInArea(Areas[area], player.Character.PrimaryPart.Position)
-		if t_val == true then
-			Area = Areas[area]
-			break
+	for _, area in ipairs(Areas) do
+		if isInArea(area, player.Character.PrimaryPart.Position) then
+			return area
 		end
 	end
-	for i in Areas do
-		if Area == nil then
-			local sides = Areas[i].Area:GetChildren()
-			for x in sides do
-				sides[x].SurfaceLight.Color = Color3.new(1, 0, 0)
-			end
-		else
-			local sides = Areas[i].Area:GetChildren()
-			if Areas[i].Name == Area.Name then
-				for x in sides do
-					sides[x].SurfaceLight.Color = Color3.new(0, 1, 0)
-				end
-			else
-				for x in sides do
-					sides[x].SurfaceLight.Color = Color3.new(1, 0, 0)
-				end
+	return nil -- No current area found
+end
+
+-- Function to update the light colors based on player's area
+local function updateLights()
+	local area = getCurrentArea()
+	if area == nil then
+		local Areas = workspace:WaitForChild("Areas"):GetChildren()
+		for i in Areas do
+			local parts = Areas[i].Area:GetChildren()
+			for x in parts do
+				parts[x].SurfaceLight.Color = Color3.new(1, 0, 0)
 			end
 		end
-	end
-	if Area == nil then
-		--skipping
 	else
-		local val = isInArea(Area, player.Character.PrimaryPart.Position)
-		if val == true then
-			currentBreakables = rawlen(Area.Breakables:GetChildren())
-			if currentBreakables < maxBreakables then
-				local lottery = math.random(1, 1000000)
-				local breakable = nil
-				if lottery < 800000 then
-					local lotteryTwo = math.random(1,1000000)
-					if lotteryTwo < 750000 then
-						breakable = breakables.Breakable_LowCoin:Clone()
-					end
-					if lotteryTwo >= 750000 then
-						breakable = breakables.Breakable_MedCoin:Clone()
-					end
-					if lotteryTwo > 925000 then
-						breakable = breakables.Breakable_BigCoin:Clone()
-					end
-				end
-				if lottery >= 800000 then
-					breakable = breakables.Breakable_Crate:Clone()
-				end
-				if lottery > 830000 then
-					breakable = breakables.Breakable_Safe:Clone()
-				end
-				if lottery > 880000 then
-					breakable = breakables.Breakable_Gift:Clone()
-				end
-				if lottery > 920000 then
-					breakable = breakables.Breakable_Diamond:Clone()
-				end
-				if lottery > 660000 then
-					breakable = breakables.Breakable_DiamondGift:Clone()
-					breakable.Weld1.Part0 = breakable
-					breakable.Weld1.Part1 = breakable.Diamonds1
-					breakable.Weld2.Part0 = breakable
-					breakable.Weld2.Part1 = breakable.Diamonds2
-					breakable.Weld3.Part0 = breakable
-					breakable.Weld3.Part1 = breakable.Diamonds3
-					breakable.Weld4.Part0 = breakable
-					breakable.Weld4.Part1 = breakable.Diamonds4
-				end
-				if lottery > 990000 then
-					breakable = breakables.Breakable_Chest:Clone()
-				end
-				breakable.Particles.Sparkles.Enabled = false
-				breakable.Floating.Enabled = false
-				local lottery = math.random(1, 1000000)
-				if lottery > 900000 then
-					breakable.Particles.Sparkles.Enabled = true
-					breakable.Floating.Enabled = true
-					local multi = math.random(2,10)
-					breakable.Settings.Multiplier.Value += multi
-					if breakable.Name == "Breakable_Chest" then
-						breakable.Floating.Label.Text = string.format(multi .. "x Reward")
-					end
-					if breakable.Name == "Breakable_Diamond" then
-						breakable.Floating.Label.Text = string.format(multi .. "x Diamonds")
-					end
-					if breakable.Name ~= "Breakable_Diamond" then
-						if breakable.Name ~= "Breakable_Chest" then
-							breakable.Floating.Label.Text = string.format(multi .. "x Coins")
-						end
-					end
-				end
-				
-				--breakable.Parent = Area.Breakables
-				local clean = game.ReplicatedStorage.CleanUp.Clean:Clone()
-				clean.Parent = breakable
-				clean.Enabled = true
-				local updtr = game.ReplicatedStorage.CleanUp.Update:Clone()
-				updtr.Parent = breakable
-				updtr.Enabled = true
-				breakable.ClickDetector.MouseClick:Connect(function(me)
-					spawn(function()
-						sounder(breakable.Name)
-					end)
-					breakable.Clean.Enabled = false
-					wait(0.05)
-					breakable.Clean.Enabled = true
-					breakable.Settings.Health.Value -= 13
-					if breakable.Settings.Health.Value <= 0 then
-						breakable:Destroy()
-					end
-				end)
-				local canSpawn = true
-				local positions = Area.Breakables:GetChildren()
-				local x = math.random(Area.Position.X - Area.Size.X/6, Area.Position.X + Area.Size.X/6)
-				local z = math.random(Area.Position.Z - Area.Size.Z/6, Area.Position.Z + Area.Size.Z/6)
-				local y = Area.Position.Y + (breakable.Size.Y/1.75)
-				--print(rawlen(positions))
-				if rawlen(positions) == 0 then
-					breakable.Position = Vector3.new(x,y,z)
+		local Areas = workspace:WaitForChild("Areas"):GetChildren()
+		for i in Areas do
+			local parts = Areas[i].Area:GetChildren()
+			for x in parts do
+				if area.Name == Areas[i].Name then
+					parts[x].SurfaceLight.Color = Color3.new(0, 1, 0)
 				else
-					for i in positions do
-						if ((positions[i].Position - Vector3.new(x,y,z)).Magnitude) <= 8 then
-							canSpawn = false
-							break
-						end
-					end
-				end
-				if canSpawn then
-					breakable.Position = Vector3.new(x,y,z)
-					breakable.Parent = Area.Breakables
-				else
-					breakable:Destroy()
+					parts[x].SurfaceLight.Color = Color3.new(1, 0, 0)
 				end
 			end
 		end
 	end
+end
+-- Function to select the breakable
+local function selectBreakable()
+	local lottery = math.random(0,1000000000)
+	if lottery >= 500000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
+	end
+	if lottery >= 600000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_MedCoin:Clone()
+	end
+	if lottery >= 700000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Crate:Clone()
+	end
+	if lottery >= 800000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Safe:Clone()
+	end
+	if lottery >= 900000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Gift:Clone()
+	end
+	if lottery >= 950000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Diamond:Clone()
+	end
+	if lottery >= 999000000 then
+		return game.ReplicatedStorage.Breakables.Breakable_Chest:Clone()
+	end
+	return game.ReplicatedStorage.Breakables.Breakable_LowCoin:Clone()
+end
+-- Function to choose spawn location
+local function determineSpawnLocation(area, breakable)
+	local currentBreakables = area.Breakables:GetChildren()
+	local x = math.random(area.Position.X - area.Size.X/6, area.Position.X + area.Size.X/6)
+	local z = math.random(area.Position.Z - area.Size.Z/6, area.Position.Z + area.Size.Z/6)
+	local y = area.Position.Y + (breakable.Size.Y/1.75)
+	local lenCanSpawn = true
+	if rawlen(currentBreakables) == 0 then
+		return true, x, y, z
+	else
+		for i in currentBreakables do
+			if (currentBreakables[i].Position - Vector3.new(x,y,z)).Magnitude <= minDistance then
+				lenCanSpawn = false
+				return false, x, y, z
+			end
+		end
+		if lenCanSpawn then
+			return true, x, y, z
+		end
+	end
+end
+-- Function to setup Breakables
+local function setupBreakable(breakable)
+	breakable.ClickDetector.MouseClick:Connect(function()
+		playSound(breakable.Name, character.Head)
+	end)
+	
+	local updt = game.ReplicatedStorage.CleanUp.Update:Clone()
+	updt.Parent = breakable
+	local cln = game.ReplicatedStorage.CleanUp.Clean:Clone()
+	cln.Parent = breakable
+	local brkblx = game.ReplicatedStorage.CleanUp.Breakable_Check:Clone()
+	brkblx.Parent = breakable
+	
+	updt.Enabled = true
+	cln.Enabled = true
+	brkblx.Enabled = true
+end
+-- Function to handle the "lottery" system for spawning breakables
+local function spawnBreakable(area)
+	local currentBreakables = #area.Breakables:GetChildren()
+	if currentBreakables >= maxBreakables then return end -- No need to spawn more breakables
+
+	local breakable = selectBreakable() -- Function to be defined for selecting breakable based on lottery
+	if not breakable then return end -- No breakable selected
+
+	local canSpawn, x, y, z = determineSpawnLocation(area, breakable) -- Function to be defined for determining spawn location
+	if not canSpawn then return end -- Can't spawn at the determined location
+
+	breakable.Position = Vector3.new(x, y, z)
+	breakable.Parent = area.Breakables
+	setupBreakable(breakable) -- Function to be defined for setting up the breakable (click detector, cleanup, etc.)
+end
+
+-- Main loop
+while true do
+	local currentArea = getCurrentArea()
+	updateLights()
+
+	if currentArea then
+		spawnBreakable(currentArea)
+	end
+
 	wait(0.15)
 end
