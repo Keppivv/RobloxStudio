@@ -14,16 +14,6 @@ local function isInArea(area, pos)
 	end
 	return true
 end
-
--- Function to play different sounds based on the breakable type
-local function playSound(name, parent)
-	local sound = game.ReplicatedStorage.Sounds.Coins:Clone() -- default sound
-	sound.Parent = parent
-	sound:Play()
-	wait(1)
-	sound:Destroy()
-end
-
 -- Function to determine which Area the player is currently in
 local function getCurrentArea()
 	local Areas = workspace:WaitForChild("Areas"):GetChildren()
@@ -110,13 +100,10 @@ local function determineSpawnLocation(area, breakable)
 end
 -- Function to setup Breakables
 local function setupBreakable(breakable)
-	breakable.ClickDetector.MouseClick:Connect(function()
-		playSound(breakable.Name, character.Head)
-	end)
-	
 	local updt = game.ReplicatedStorage.CleanUp.Update:Clone()
 	updt.Parent = breakable
 	local cln = game.ReplicatedStorage.CleanUp.Clean:Clone()
+	cln.Time.Value = 60*5
 	cln.Parent = breakable
 	local brkblx = game.ReplicatedStorage.CleanUp.Breakable_Check:Clone()
 	brkblx.Parent = breakable
@@ -176,9 +163,14 @@ local function spawnBreakable(area)
 	end
 	
 	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
-	local rotation = CFrame.Angles(0, 0, math.rad(math.random(-180,180)))
-	local modelCFrame = breakable:GetPivot()
-	breakable:PivotTo(modelCFrame * rotation)
+	local coinType = {"SmallCoin", "MediumCoin", "BigCoin"}
+	for i in coinType do
+		if coinType[i] == breakable.Name then
+			local rotation = CFrame.Angles(0, 0, math.rad(math.random(-180,180)))
+			local modelCFrame = breakable:GetPivot()
+			breakable:PivotTo(modelCFrame * rotation)
+		end
+	end
 	
 	breakable.Parent = area.Breakables
 	setupBreakable(breakable)
