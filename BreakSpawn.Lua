@@ -64,22 +64,22 @@ end
 local function selectBreakable()
 	local lottery = math.random(0,1000000000)
 	if lottery >= 999000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.SmallDiamond:Clone()
 	end
 	if lottery >= 950000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.SmallDiamond:Clone()
 	end
 	if lottery >= 900000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.BigCoin:Clone()
 	end
 	if lottery >= 800000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.BigCoin:Clone()
 	end
 	if lottery >= 700000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.MediumCoin:Clone()
 	end
 	if lottery >= 600000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+		return game.ReplicatedStorage.Breakables.MediumCoin:Clone()
 	end
 	if lottery >= 500000000 then
 		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
@@ -125,6 +125,40 @@ local function setupBreakable(breakable)
 	cln.Enabled = true
 	brkblx.Enabled = true
 end
+-- Function to handle Lucky
+local function isLucky()
+	local luck = 1 -- 1%
+	if math.random(0,100) <= luck then
+		return true
+	else
+		return false
+	end
+end
+-- Function to handle Lucky GUI
+local function luckyGui(breakable)
+	local floating = breakable.Floating
+	local multi = math.random(2,6)
+	floating.Enabled = true
+	floating.Label.Text = "2x reawrd"
+	local coinType = {"SmallCoin", "MediumCoin", "BigCoin", "CoinChest"}
+	local rewardType = {"SmallChest", "BigChest"}
+	local diamondType = {"SmallDiamond", "MediumDiamond", "BigDiamond", "DiamondChest"}
+	for i in coinType do
+		if coinType[i] == breakable.Name then
+			floating.Label.Text = multi .. "x Coins"
+		end
+	end
+	for i in rewardType do
+		if rewardType[i] == breakable.Name then
+			floating.Label.Text = multi .. "x Reward"
+		end
+	end
+	for i in diamondType do
+		if diamondType[i] == breakable.Name then
+			floating.Label.Text = multi .. "x Diamonds"
+		end
+	end
+end
 -- Function to handle the "lottery" system for spawning breakables
 local function spawnBreakable(area)
 	local currentBreakables = #area.Breakables:GetChildren()
@@ -135,6 +169,11 @@ local function spawnBreakable(area)
 
 	local canSpawn, x, y, z = determineSpawnLocation(area, breakable)
 	if not canSpawn then return end -- Can't spawn at the determined location
+	
+	local isBreakableLucky = isLucky()
+	if isBreakableLucky then
+		luckyGui(breakable)
+	end
 	
 	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
 	local rotation = CFrame.Angles(0, 0, math.rad(math.random(-180,180)))
