@@ -6,7 +6,7 @@ local maxBreakables = 40
 local minDistance = 6
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
--- Check if player is inside the Area in x and y axis
+-- Check if player is inside the Area in z and y axis
 local function isInArea(area, pos)
 	if pos.X > area.Position.X + area.Size.X/4 or pos.X < area.Position.X - area.Size.X/4 or
 		pos.Z > area.Position.Z + area.Size.Z/4 or pos.Z < area.Position.Z - area.Size.Z/4 then
@@ -130,18 +130,19 @@ local function spawnBreakable(area)
 	local currentBreakables = #area.Breakables:GetChildren()
 	if currentBreakables >= maxBreakables then return end -- No need to spawn more breakables
 
-	local breakable = selectBreakable() -- Function to be defined for selecting breakable based on lottery
+	local breakable = selectBreakable()
 	if not breakable then return end -- No breakable selected
 
-	local canSpawn, x, y, z = determineSpawnLocation(area, breakable) -- Function to be defined for determining spawn location
+	local canSpawn, x, y, z = determineSpawnLocation(area, breakable)
 	if not canSpawn then return end -- Can't spawn at the determined location
 	
-	--local xxx = Instance.new("Model")
 	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
+	local rotation = CFrame.Angles(0, 0, math.rad(math.random(-180,180)))
+	local modelCFrame = breakable:GetPivot()
+	breakable:PivotTo(modelCFrame * rotation)
 	
-	--breakable:MoveTo(Vector3.new(x,y,z))
 	breakable.Parent = area.Breakables
-	setupBreakable(breakable) -- Function to be defined for setting up the breakable (click detector, cleanup, etc.)
+	setupBreakable(breakable)
 end
 
 -- Main loop
