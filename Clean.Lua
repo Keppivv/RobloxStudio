@@ -1,2 +1,2 @@
-wait(60*5)
+wait(script.Time.Value)
 script.Parent:Destroy()
