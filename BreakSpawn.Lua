@@ -81,7 +81,7 @@ local function determineSpawnLocation(area, breakable)
 	local currentBreakables = area.Breakables:GetChildren()
 	local x = math.random(area.Position.X - area.Size.X/6, area.Position.X + area.Size.X/6)
 	local z = math.random(area.Position.Z - area.Size.Z/6, area.Position.Z + area.Size.Z/6)
-	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y/4.5)
+	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y)
 	
 	local lenCanSpawn = true
 	if rawlen(currentBreakables) == 0 then
@@ -163,15 +163,9 @@ local function spawnBreakable(area)
 	end
 	
 	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
-	local coinType = {"SmallCoin", "MediumCoin", "BigCoin"}
-	for i in coinType do
-		if coinType[i] == breakable.Name then
-			local rotation = CFrame.Angles(0, 0, math.rad(math.random(-180,180)))
-			local modelCFrame = breakable:GetPivot()
-			breakable:PivotTo(modelCFrame * rotation)
-		end
-	end
-	
+	local rotation = CFrame.Angles(0, math.rad(math.random(0,180)), 0)
+	local modelCFrame = breakable:GetPivot()
+	breakable:PivotTo(modelCFrame * rotation)
 	breakable.Parent = area.Breakables
 	setupBreakable(breakable)
 end
