@@ -1,5 +1,7 @@
--- ServerScriptService
 local Players = game:GetService("Players")
+local key = "test01_DataTable_"
+local store = game:GetService("DataStoreService")
+local dataStore = store:GetDataStore("DataStore")
 
 local function onJoin(player)
 	local success, fail = pcall(function()
@@ -34,6 +36,16 @@ local function onJoin(player)
 		return false
 	end
 end
+local function loadData(player, data)
+	if data == nil then end
+	if data == {} then end
+	for i in data do
+		local parent = player.DataFolder:FindFirstChild(tostring(data[i][1]))
+		local clonable = game.ReplicatedStorage.Datas:FindFirstChild(data[i][1]):FindFirstChild(data[i][2]):Clone()
+		clonable.UID.Value = data[i][4]
+		clonable.Parent = parent
+	end
+end
 local function saveData(player)
 	local kids = player.DataFolder:GetChildren()
 	local dataTable = {}
@@ -46,12 +58,14 @@ local function saveData(player)
 			end
 		end
 	end
-	print(dataTable)
-	wait(8)
+	local playerKey = key .. player.UserId
+	dataStore:SetAsync(playerKey, dataTable)
+	wait(12)
 	saveData(player)
 end
 Players.PlayerAdded:Connect(function(player)
 	local playerCharacter = player.Character or player.CharacterAdded:Wait()
+	local playerKey = key .. player.UserId
 	local createData = onJoin(player)
 	while createData ~= true do
 		if createData == false then
@@ -59,6 +73,13 @@ Players.PlayerAdded:Connect(function(player)
 		end
 		wait(0.1)
 	end
-	wait(5)
+	local data = nil
+	local succ, err = pcall(function()
+		data = dataStore:GetAsync(playerKey)
+	end)
+	if succ then
+		loadData(player, data)
+	end
+	wait(3)
 	saveData(player)
 end)
