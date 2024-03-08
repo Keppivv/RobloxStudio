@@ -2,8 +2,8 @@ local Areas = workspace:WaitForChild("Areas"):GetChildren()
 local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
-local maxBreakables = 40
-local minDistance = 6
+local maxBreakables = 69
+local minDistance = 4.5
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -55,27 +55,38 @@ local function updateLights()
 end
 -- Function to select the breakable
 local function selectBreakable()
-	local lottery = math.random(0,1000000000)
-	if lottery >= 999000000 then
-		return game.ReplicatedStorage.Breakables.SmallDiamond:Clone()
+	local min = 1
+	local max = 1000000000
+	local lottery = math.random(min, max)
+	local brkbls = game.ReplicatedStorage.Breakables:GetChildren()
+	local valueTable = {}
+	local nameTable = {}
+	for i in brkbls do
+		table.insert(valueTable, {brkbls[i].Settings.Chance.Value, brkbls[i].Name})
 	end
-	if lottery >= 950000000 then
-		return game.ReplicatedStorage.Breakables.SmallDiamond:Clone()
+	table.sort(valueTable, function(a,b)
+		return a[1]<b[1]
+	end)
+	local chanceTable = {}
+	for i in valueTable do
+		table.insert(chanceTable, {(max * valueTable[i][1]), valueTable[i][2]})
 	end
-	if lottery >= 900000000 then
-		return game.ReplicatedStorage.Breakables.BigCoin:Clone()
-	end
-	if lottery >= 800000000 then
-		return game.ReplicatedStorage.Breakables.BigCoin:Clone()
-	end
-	if lottery >= 700000000 then
-		return game.ReplicatedStorage.Breakables.MediumCoin:Clone()
-	end
-	if lottery >= 600000000 then
-		return game.ReplicatedStorage.Breakables.MediumCoin:Clone()
-	end
-	if lottery >= 500000000 then
-		return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
+	table.sort(chanceTable, function(a,b)
+		return a[1]<b[1]
+	end)
+	print(chanceTable)
+	for i in chanceTable do
+		if chanceTable[i][1] >= lottery then
+			local lenTable = {}
+			table.insert(lenTable, chanceTable[i])
+			for x in chanceTable do
+				if chanceTable[x][1] == chanceTable[i][1] then
+					table.insert(lenTable, chanceTable[x])
+				end
+			end
+			local ran = math.random(1,#lenTable)
+			return game.ReplicatedStorage.Breakables:FindFirstChild(lenTable[ran][2]):Clone()
+		end
 	end
 	return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
 end
@@ -182,5 +193,5 @@ while true do
 		spawnBreakable(currentArea)
 	end
 
-	wait(0.15)
+	wait(0.1)
 end
