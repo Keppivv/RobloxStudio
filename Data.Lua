@@ -42,7 +42,6 @@ local function loadData(player, data)
 	for i in data do
 		local parent = player.DataFolder:FindFirstChild(tostring(data[i][1]))
 		local clonable = game.ReplicatedStorage.Datas:FindFirstChild(data[i][1]):FindFirstChild(data[i][2]):Clone()
-		clonable.UID.Value = data[i][4]
 		clonable.Parent = parent
 	end
 end
@@ -53,7 +52,7 @@ local function saveData(player)
 		if #kids[i]:GetChildren() >= 1 then
 			local dataValues = kids[i]:GetChildren()
 			for x in dataValues do
-				local infoTable = {dataValues[x].Class.Value, dataValues[x].e_Name.Value, dataValues[x].Boost.Value, dataValues[x].UID.Value}
+				local infoTable = {dataValues[x].Class.Value, dataValues[x].e_Name.Value}
 				table.insert(dataTable, infoTable)
 			end
 		end
