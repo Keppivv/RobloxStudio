@@ -2,9 +2,9 @@ local Areas = workspace:WaitForChild("Areas"):GetChildren()
 local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
-local maxBreakables = 69
-local minDistance = 4.20
-local sleepTime = 0.125
+local maxBreakables = 90
+local minDistance = 4.20*1.5
+local sleepTime = 0.125/2
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -155,6 +155,19 @@ local function luckyGui(breakable)
 		end
 	end
 end
+-- Scales breakable from 0 to 1
+local function scaleFunction(breakable)
+	local scaler = true
+	local counter = 0
+	while scaler do
+		counter += 1
+		breakable:ScaleTo((0.1*counter))
+		if counter == 10 then
+			scaler = false
+		end
+		wait(0.01)
+	end
+end
 -- Function to handle the "lottery" system for spawning breakables
 local function spawnBreakable(area)
 	local currentBreakables = #area.Breakables:GetChildren()
@@ -174,8 +187,12 @@ local function spawnBreakable(area)
 	breakable:TranslateBy(Vector3.new(x,y,z)-breakable.PrimaryPart.Position)
 	local rotation = CFrame.Angles(0, math.rad(math.random(0,180)), 0)
 	local modelCFrame = breakable:GetPivot()
+	breakable:ScaleTo(0.001)
 	breakable:PivotTo(modelCFrame * rotation)
 	breakable.Parent = area.Breakables
+	spawn(function()
+		scaleFunction(breakable)
+	end)
 	setupBreakable(breakable)
 end
 
