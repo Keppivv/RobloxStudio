@@ -2,9 +2,9 @@ local Areas = workspace:WaitForChild("Areas"):GetChildren()
 local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
-local maxBreakables = 69*69
-local minDistance = 4.20/100
-local sleepTime = 0.15/999
+local maxBreakables = 69
+local minDistance = 4.20
+local sleepTime = 0.125
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -80,9 +80,6 @@ local function selectBreakable()
 				end
 			end
 			local cloable = game.ReplicatedStorage.Breakables:FindFirstChild(chanceTable[math.random(1,#chanceTable)][2]):Clone()
-			if cloable.Name ~= "SmallCoin" then
-				print({cloable, valueTable, lottery, lotteryMin, lotteryMax, chanceTable})
-			end
 			return cloable
 		end
 	end
@@ -93,7 +90,7 @@ local function determineSpawnLocation(area, breakable)
 	local currentBreakables = area.Breakables:GetChildren()
 	local x = math.random(area.Position.X - area.Size.X/2.3, area.Position.X + area.Size.X/2.3)
 	local z = math.random(area.Position.Z - area.Size.Z/2.3, area.Position.Z + area.Size.Z/2.3)
-	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y)
+	local y = area.Position.Y + (breakable.PrimaryPart.Size.Y/2)
 	
 	local lenCanSpawn = true
 	if rawlen(currentBreakables) == 0 then
