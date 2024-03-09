@@ -2,8 +2,9 @@ local Areas = workspace:WaitForChild("Areas"):GetChildren()
 local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
-local maxBreakables = 69
-local minDistance = 4.20
+local maxBreakables = 69*69
+local minDistance = 4.20/100
+local sleepTime = 0.15/999
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -71,12 +72,10 @@ local function selectBreakable()
 	for i in valueTable do
 		local num = tonumber(valueTable[i][1])
 		local sum = ((num / 100) * max)
-		if sum >= lottery then
+		if sum >= lotteryMax then
 			local chanceTable = {}
 			for x in valueTable do
-				local num = tonumber(valueTable[x][1])
-				local sum = ((num / 100) * max)
-				if sum >= lotteryMax then
+				if tonumber(valueTable[x][1]) == tonumber(valueTable[i][1]) then
 					table.insert(chanceTable, valueTable[x])
 				end
 			end
@@ -192,5 +191,5 @@ while true do
 		spawnBreakable(currentArea)
 	end
 
-	wait(0.125)
+	wait(sleepTime)
 end
