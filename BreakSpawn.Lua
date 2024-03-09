@@ -3,7 +3,7 @@ local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
 local maxBreakables = 69
-local minDistance = 4.5
+local minDistance = 4.20
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -57,35 +57,34 @@ end
 local function selectBreakable()
 	local min = 1
 	local max = 1000000000
+	local leeWay = 0.95 -- 5%
 	local lottery = math.random(min, max)
+	local lotteryMin, lotteryMax = (lottery * leeWay), (lottery / 0.95)
 	local brkbls = game.ReplicatedStorage.Breakables:GetChildren()
 	local valueTable = {}
-	local nameTable = {}
 	for i in brkbls do
 		table.insert(valueTable, {brkbls[i].Settings.Chance.Value, brkbls[i].Name})
 	end
 	table.sort(valueTable, function(a,b)
 		return a[1]<b[1]
 	end)
-	local chanceTable = {}
 	for i in valueTable do
-		table.insert(chanceTable, {(max * valueTable[i][1]), valueTable[i][2]})
-	end
-	table.sort(chanceTable, function(a,b)
-		return a[1]<b[1]
-	end)
-	print(chanceTable)
-	for i in chanceTable do
-		if chanceTable[i][1] >= lottery then
-			local lenTable = {}
-			table.insert(lenTable, chanceTable[i])
-			for x in chanceTable do
-				if chanceTable[x][1] == chanceTable[i][1] then
-					table.insert(lenTable, chanceTable[x])
+		local num = tonumber(valueTable[i][1])
+		local sum = ((num / 100) * max)
+		if sum >= lottery then
+			local chanceTable = {}
+			for x in valueTable do
+				local num = tonumber(valueTable[x][1])
+				local sum = ((num / 100) * max)
+				if sum <= lotteryMax then
+					table.insert(chanceTable, valueTable[x])
 				end
 			end
-			local ran = math.random(1,#lenTable)
-			return game.ReplicatedStorage.Breakables:FindFirstChild(lenTable[ran][2]):Clone()
+			local cloable = game.ReplicatedStorage.Breakables:FindFirstChild(chanceTable[math.random(1,#chanceTable)][2]):Clone()
+			if cloable.Name ~= "SmallCoin" then
+				print({cloable, valueTable, lottery, lotteryMin, lotteryMax, chanceTable})
+			end
+			return cloable
 		end
 	end
 	return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
@@ -193,5 +192,5 @@ while true do
 		spawnBreakable(currentArea)
 	end
 
-	wait(0.1)
+	wait(0.125)
 end
