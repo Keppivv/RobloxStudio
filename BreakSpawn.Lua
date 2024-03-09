@@ -76,7 +76,7 @@ local function selectBreakable()
 			for x in valueTable do
 				local num = tonumber(valueTable[x][1])
 				local sum = ((num / 100) * max)
-				if sum <= lotteryMax then
+				if sum >= lotteryMax then
 					table.insert(chanceTable, valueTable[x])
 				end
 			end
