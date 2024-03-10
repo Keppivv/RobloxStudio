@@ -68,7 +68,8 @@ local function saveData(player)
 	wait(12)
 	saveData(player)
 end
-Players.PlayerAdded:Connect(function(player)
+-- Function to create and load, start AutoSave too.
+local function runUp(player)
 	local playerCharacter = player.Character or player.CharacterAdded:Wait()
 	local playerKey = key .. player.UserId
 	local createData = onJoin(player)
@@ -78,7 +79,15 @@ Players.PlayerAdded:Connect(function(player)
 	end)
 	if succ then
 		loadData(player, data)
+		wait(3)
+		saveData(player)
 	end
-	wait(3)
-	saveData(player)
+	if err then
+		print(err)
+		wait(1)
+		runUp(player)
+	end
+end
+Players.PlayerAdded:Connect(function(player)
+	runUp(player)
 end)
