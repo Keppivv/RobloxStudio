@@ -72,12 +72,6 @@ Players.PlayerAdded:Connect(function(player)
 	local playerCharacter = player.Character or player.CharacterAdded:Wait()
 	local playerKey = key .. player.UserId
 	local createData = onJoin(player)
-	while createData ~= true do
-		if createData == false then
-			onJoin(player)
-		end
-		wait(0.1)
-	end
 	local data = nil
 	local succ, err = pcall(function()
 		data = dataStore:GetAsync(playerKey)
