@@ -9,6 +9,7 @@ for x in otherTable do
 	if otherTable[x].Enabled == true then
 		if otherTable[x].Name ~= "LoadingScreen" then
 			table.insert(enableTable, otherTable[x])
+			otherTable[x].Enabled = false
 		end
 	end
 end
