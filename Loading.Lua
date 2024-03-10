@@ -2,6 +2,7 @@ player = game.Players.LocalPlayer
 screen = player.PlayerGui:WaitForChild("LoadingScreen")
 stock = screen:WaitForChild("Stock")
 screen.Enabled = true
+load = stock:FindFirstChild("L_Text")
 otherTable = player.PlayerGui:GetChildren()
 enableTable = {}
 for x in otherTable do
@@ -13,12 +14,29 @@ for x in otherTable do
 end
 onset = 0
 while onset < 225 do
+	if 1 > math.random(0,35) then
+		if rawlen(load.Text) >= 10 then
+			load.Text = "Loading"
+		else
+			load.Text = load.Text .. "."
+		end
+	end
 	onset += 1
 	stock.BackgroundColor3 = Color3.new(onset/225, onset/225, onset/225)
 	task.wait()
 end
-for i=1, 100 do
-	stock.BackgroundTransparency = i / 100
+for i=1, 225 do
+	if 1 > math.random(0,35) then
+		if rawlen(load.Text) >= 10 then
+			load.Text = "Loading"
+		else
+			load.Text = load.Text .. "."
+		end
+	end
+	load.TextTransparency = i / 225
+	load.UIStroke.Transparency = i / 225
+	stock.BackgroundTransparency = i / 225
+	stock.BackgroundColor3 = Color3.new(225-i, 225-i, 225-i)
 	task.wait()
 end
 screen.Enabled = false
