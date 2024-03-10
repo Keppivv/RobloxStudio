@@ -2,32 +2,38 @@ local Players = game:GetService("Players")
 local key = "test01_DataTable_"
 local store = game:GetService("DataStoreService")
 local dataStore = store:GetDataStore("DataStore")
+-- cAsE sEnSiTivE!
+
+-- Create folder in ReplicatedStorage called "Datas"
+-- Create sub folders in Datas {"Abilities", "Assets", "Capital", "Perks", "Pets"}
+
+-- Object creation -> "Configuration" objType as a child for selected sub folder
+-- eg. Obj "2x Money" instance as Configuration type
+-- Configuration instance should be named as the obj name
+-- As for the childs of the instanced Configuration file you *HAVE* to..
+-- have 2 StringValues called "e_Name" and "Class"
+-- Class name is the parent folder name eg Capital, Pets..
+-- e_Name is the name of the object, named such due "Name" beign attribute of obj already>>
+-- but !! IMPORTTANT !! it needs to be the same name as obj, eg "2x Money"
+
+-- Additional data can be added as a child to the Configuration file
+-- But custom data can't be modified and saved, default data loads on startup
+-- and custom data is lost.
+
+--
 
 local function onJoin(player)
 	local success, fail = pcall(function()
 		local DataFolder = Instance.new("Folder")
 		DataFolder.Name = "DataFolder"
 		DataFolder.Parent = player
+		local nameTable = {"Abilities", "Assets", "Capital", "Perks", "Pets"}
 		
-		local Pets = Instance.new("Folder")
-		Pets.Name = "Pets"
-		Pets.Parent = DataFolder
-		
-		local Capital = Instance.new("Folder")
-		Capital.Name = "Capital"
-		Capital.Parent = DataFolder
-		
-		local Assets = Instance.new("Folder")
-		Assets.Name = "Assets"
-		Assets.Parent = DataFolder
-		
-		local Perks = Instance.new("Folder")
-		Perks.Name = "Perks"
-		Perks.Parent = DataFolder
-		
-		local Abilities = Instance.new("Folder")
-		Abilities.Name = "Abilities"
-		Abilities.Parent = DataFolder
+		for i in nameTable do
+			local folder = Instance.new("Folder")
+			folder.Name = nameTable[i]
+			folder.Parent = DataFolder
+		end
 	end)
 	if success then
 		return true
