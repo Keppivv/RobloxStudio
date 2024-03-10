@@ -23,16 +23,33 @@ local dataStore = store:GetDataStore("DataStore")
 --
 
 local function onJoin(player)
+	local alreadyDoneDF = false
+	local suc, err = pcall(function()
+		if player:FindFirstChild("DataFolder") then
+			alreadyDoneDF = true
+		end
+	end)
 	local success, fail = pcall(function()
-		local DataFolder = Instance.new("Folder")
-		DataFolder.Name = "DataFolder"
-		DataFolder.Parent = player
+		if not alreadyDoneDF then
+			local DataFolder = Instance.new("Folder")
+			DataFolder.Name = "DataFolder"
+			DataFolder.Parent = player
+		end
+		local DataFolder = player:FindFirstChild("DataFolder")
 		local nameTable = {"Abilities", "Assets", "Capital", "Perks", "Pets"}
-		
 		for i in nameTable do
-			local folder = Instance.new("Folder")
-			folder.Name = nameTable[i]
-			folder.Parent = DataFolder
+			local detected = false
+			local DataKids = DataFolder:GetChildren()
+			for x in DataKids do
+				if DataKids[x].Name == nameTable[i] then
+					detected = true
+				end
+			end
+			if not detected then
+				local folder = Instance.new("Folder")
+				folder.Name = nameTable[i]
+				folder.Parent = DataFolder
+			end
 		end
 	end)
 	if success then
@@ -79,7 +96,7 @@ local function runUp(player)
 	end)
 	if succ then
 		loadData(player, data)
-		wait(3)
+		wait(2)
 		saveData(player)
 	end
 	if err then
