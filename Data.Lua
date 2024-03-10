@@ -49,6 +49,12 @@ local function onJoin(player)
 				local folder = Instance.new("Folder")
 				folder.Name = nameTable[i]
 				folder.Parent = DataFolder
+				if nameTable[i] == "Capital" then
+					local credits = game.ReplicatedStorage.Datas.Capital:FindFirstChild("Crop Credits"):Clone()
+					local crowns = game.ReplicatedStorage.Datas.Capital:FindFirstChild("Crop Crowns"):Clone()
+					credits.Parent = folder
+					crowns.Parent = folder
+				end
 			end
 		end
 	end)
@@ -65,7 +71,12 @@ local function loadData(player, data)
 	for i in data do
 		local parent = player.DataFolder:FindFirstChild(tostring(data[i][1]))
 		local clonable = game.ReplicatedStorage.Datas:FindFirstChild(data[i][1]):FindFirstChild(data[i][2]):Clone()
-		clonable.Parent = parent
+		if data[i][1] == "Capital" then
+			local credit = player.DataFolder.Capital:FindFirstChild(data[i][2])
+			credit.Credits.Value = data[i][3]
+		else
+			clonable.Parent = parent
+		end
 	end
 end
 local function saveData(player)
@@ -75,13 +86,19 @@ local function saveData(player)
 		if #kids[i]:GetChildren() >= 1 then
 			local dataValues = kids[i]:GetChildren()
 			for x in dataValues do
-				local infoTable = {dataValues[x].Class.Value, dataValues[x].e_Name.Value}
-				table.insert(dataTable, infoTable)
+				if dataValues[x].Class.Value == "Capital" then
+					local infoTable = {dataValues[x].Class.Value, dataValues[x].e_Name.Value, dataValues[x].Credits.Value}
+					table.insert(dataTable, infoTable)
+				else
+					local infoTable = {dataValues[x].Class.Value, dataValues[x].e_Name.Value}
+					table.insert(dataTable, infoTable)
+				end
 			end
 		end
 	end
 	local playerKey = key .. player.UserId
 	dataStore:SetAsync(playerKey, dataTable)
+	print(dataTable)
 	wait(12)
 	saveData(player)
 end
@@ -96,6 +113,7 @@ local function runUp(player)
 	end)
 	if succ then
 		loadData(player, data)
+		print(data)
 		wait(2)
 		saveData(player)
 	end
