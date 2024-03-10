@@ -1,3 +1,5 @@
+local sgui = game:GetService("StarterGui")
+sgui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 player = game.Players.LocalPlayer
 screen = player.PlayerGui:WaitForChild("LoadingScreen")
 stock = screen:WaitForChild("Stock")
