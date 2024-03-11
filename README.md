@@ -8,3 +8,4 @@ Input detection, sound and math functionality..
 
 DataStorage, modular any type object with custom data loading and saving system..
 
+Server/Client communication protocol established..
