@@ -135,25 +135,11 @@ local function luckyGui(breakable)
 	local floating = breakable.Floating
 	local multi = math.random(2,6)
 	floating.Enabled = true
-	floating.Label.Text = "2x reawrd"
-	local coinType = {"SmallCoin", "MediumCoin", "BigCoin", "CoinChest"}
-	local rewardType = {"SmallChest", "BigChest"}
-	local diamondType = {"SmallDiamond", "MediumDiamond", "BigDiamond", "DiamondChest"}
-	for i in coinType do
-		if coinType[i] == breakable.Name then
-			floating.Label.Text = multi .. "x Coins"
-		end
-	end
-	for i in rewardType do
-		if rewardType[i] == breakable.Name then
-			floating.Label.Text = multi .. "x Reward"
-		end
-	end
-	for i in diamondType do
-		if diamondType[i] == breakable.Name then
-			floating.Label.Text = multi .. "x Diamonds"
-		end
-	end
+	floating.Label.Text = tostring(multi) .. "x Reward!"
+	local luck = Instance.new("IntValue")
+	luck.Name = "Luck"
+	luck.Parent = breakable.Settings
+	luck.Value = multi
 end
 -- Scales breakable from 0 to 1
 local function scaleFunction(breakable)
@@ -193,6 +179,11 @@ local function spawnBreakable(area)
 	spawn(function()
 		scaleFunction(breakable)
 	end)
+	local area_num = Instance.new("IntValue")
+	area_num.Name = "AreaNumber"
+	local depotName = string.sub(tostring(area), rawlen(area.Name)-2)
+	area_num.Value = tonumber(depotName)
+	area_num.Parent = breakable
 	setupBreakable(breakable)
 end
 
