@@ -1,0 +1,10 @@
+replicatedStorage = game:GetService("ReplicatedStorage")
+events = replicatedStorage:WaitForChild("Events")
+
+events.Breakable_Break.OnServerEvent:Connect(function(player, crops, crowns)
+	print(player,crops,crowns)
+	local a = player:FindFirstChild("DataFolder"):FindFirstChild("Capital"):FindFirstChild("Crop Credits")
+	local b = player:FindFirstChild("DataFolder"):FindFirstChild("Capital"):FindFirstChild("Crop Crowns")
+	a.Credits.Value += tonumber(crops)
+	b.Credits.Value += tostring(crowns)
+end)
