@@ -1,5 +1,6 @@
 local detector = script.Parent.ClickDetector
 local head = game.Players.LocalPlayer.Character:WaitForChild("Head")
+local player = game.Players.LocalPlayer
 local function playSound()
 	local sound = game.ReplicatedStorage.Sounds.Coins:Clone() -- default sound
 	sound.Parent = head
@@ -33,19 +34,24 @@ local function breaking(player)
 	local crowns = 0
 	crops += math.random(minReward,maxReward)
 	if math.random(0,100) > 75 then
-		crowns += math.random((1+(minReward / 3)), (1+(maxReward / 3)))
+		crowns += math.random((1+(minReward / 2)), (1+(maxReward)))
 	end
 	game.ReplicatedStorage.Events.Breakable_Break:FireServer(crops, crowns)
 	task.wait()
 	script.Parent:Destroy()
 end
-detector.MouseClick:Connect(function(player)
+
+local helt = script.Parent.Settings.Health
+helt.Changed:Connect(function(me)
 	local che = playSound()	
-	script.Parent.Settings.Health.Value -= 10
 	if script.Parent.Settings.Health.Value <= 0 then
 		script.Parent:ScaleTo(0.001)
 		script.Parent.ClickDetector:Destroy()
 		task.wait()
 		breaking(player)
 	end
+end)
+
+detector.MouseClick:Connect(function(player)
+	script.Parent.Settings.Health.Value -= 10
 end)
