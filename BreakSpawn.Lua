@@ -5,7 +5,7 @@ local character = player.Character:WaitForChild("Head").Parent
 local debugBol = false
 local maxBreakables = 88
 local minDistance = 4.20*1.341234
-local sleepTime = 0.125/4
+local sleepTime = 0.2
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
 -- Check if player is inside the Area in z and y axis
@@ -75,18 +75,23 @@ local function selectBreakable()
 			table.insert(randomList, x)
 		end
 	end
-	for i in randomList do
-		local ind = string.split(brkbls[i].Settings.Chance.Value, "/")
+	for i in brkbls do
+		local ind = string.split(brkbls[randomList[i]].Settings.Chance.Value, "/")
 		local min, max = tonumber(ind[1]), tonumber(ind[2])
 		local lottery = math.random(1, max)
 		if lottery <= min then
 			if debugBol then
-				print("Spawning: " .. brkbls[i].Name)
+				print("--- --- --- --- ---")
+				print("Spawning: " .. brkbls[randomList[i]].Name)
 				print("randomList: ", randomList)
 				print("min | max: ", min, " | ", max)
 				print("lottery: ", lottery)
+				print("index: ", i)
+				print("random index: ", randomList[i])
+				print("brkblsList: ", brkbls)
+				print("--- --- --- --- ---")
 			end
-			return game.ReplicatedStorage.Breakables:FindFirstChild(brkbls[i].Name):Clone()
+			return game.ReplicatedStorage.Breakables:FindFirstChild(brkbls[randomList[i]].Name):Clone()
 		end
 	end
 	return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
