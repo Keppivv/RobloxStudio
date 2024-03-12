@@ -56,31 +56,13 @@ local function updateLights()
 end
 -- Function to select the breakable
 local function selectBreakable()
-	local min = 1
-	local max = 1000000000
-	local leeWay = 0.95 -- 5%
-	local lottery = math.random(min, max)
-	local lotteryMin, lotteryMax = (lottery * leeWay), (lottery / 0.95)
 	local brkbls = game.ReplicatedStorage.Breakables:GetChildren()
-	local valueTable = {}
 	for i in brkbls do
-		table.insert(valueTable, {brkbls[i].Settings.Chance.Value, brkbls[i].Name})
-	end
-	table.sort(valueTable, function(a,b)
-		return a[1]<b[1]
-	end)
-	for i in valueTable do
-		local num = tonumber(valueTable[i][1])
-		local sum = ((num / 100) * max)
-		if sum >= lotteryMax then
-			local chanceTable = {}
-			for x in valueTable do
-				if tonumber(valueTable[x][1]) == tonumber(valueTable[i][1]) then
-					table.insert(chanceTable, valueTable[x])
-				end
-			end
-			local cloable = game.ReplicatedStorage.Breakables:FindFirstChild(chanceTable[math.random(1,#chanceTable)][2]):Clone()
-			return cloable
+		local ind = string.split(brkbls[i].Settings.Chance.Value, "/")
+		local min, max = tonumber(ind[1]), tonumber(ind[2])
+		local lottery = math.random(0, max)
+		if lottery <= min then
+			return game.ReplicatedStorage.Breakables:FindFirstChild(brkbls[i].Name):Clone()
 		end
 	end
 	return game.ReplicatedStorage.Breakables.SmallCoin:Clone()
