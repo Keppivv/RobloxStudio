@@ -3,11 +3,20 @@ local player = game.Players.LocalPlayer
 local character = player.Character:WaitForChild("Head").Parent
 
 local debugBol = false
-local maxBreakables = 88
-local minDistance = 4.20*1.341234
-local sleepTime = 0.2
+local maxBreakables = 250
+local minDistance = 2.5
+local sleepTime = 0.2/12
 local breakables = game:GetService("ReplicatedStorage"):WaitForChild("Breakables")
 
+
+local jjil = Instance.new("BoolValue")
+jjil.Name = "inArea"
+jjil.Value = false
+jjil.Parent = player
+local jjli = Instance.new("StringValue")
+jjli.Name = "areaN"
+jjli.Value = ""
+jjli.Parent = player
 -- Check if player is inside the Area in z and y axis
 local function isInArea(area, pos)
 	if pos.X > area.Position.X + area.Size.X/2 or pos.X < area.Position.X - area.Size.X/2 or
@@ -195,6 +204,8 @@ local function spawnBreakable(area)
 	local depotName = string.sub(tostring(area), rawlen(area.Name)-2)
 	area_num.Value = tonumber(depotName)
 	area_num.Parent = breakable
+	player.areaN.Value = tostring(area.Name)
+	player.inArea.Value = true
 	setupBreakable(breakable)
 end
 
@@ -205,6 +216,9 @@ while true do
 
 	if currentArea then
 		spawnBreakable(currentArea)
+	else
+		player.inArea.Value = false
+		player.areaN.Value = "1236"
 	end
 
 	wait(sleepTime)
