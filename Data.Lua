@@ -66,8 +66,8 @@ local function onJoin(player)
 	end
 end
 local function loadData(player, data)
-	if data == nil then end
-	if data == {} then end
+	if data == nil then return end
+	if data == {} then return end
 	for i in data do
 		local parent = player.DataFolder:FindFirstChild(tostring(data[i][1]))
 		local clonable = game.ReplicatedStorage.Datas:FindFirstChild(data[i][1]):FindFirstChild(data[i][2]):Clone()
@@ -76,6 +76,9 @@ local function loadData(player, data)
 			credit.Credits.Value = data[i][3]
 		else
 			clonable.Parent = parent
+			if data[i][1] == "Pets" then
+				clonable.PetScript.Enabled = true
+			end
 		end
 	end
 end
